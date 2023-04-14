@@ -1,7 +1,7 @@
 import express, { Express } from 'express';
 import { databaseConn } from './src/database/databaseConn';
-import { ConnString } from './src/utils/constants';
-// import UserRouter from './src/routes/user.routes'
+import UserRouter from './src/routes/user.route';
+import { ConnString } from './src/utils/constants/database';
 
 const app: Express = express()
 
@@ -13,6 +13,6 @@ catch(e){
 }
 
 app.use(express.json())
-// app.use('/user', UserRouter)
+app.use('/user', UserRouter)
 
 export default app

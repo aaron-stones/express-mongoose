@@ -3,10 +3,6 @@ import mongoose from "mongoose";
 interface userInterface {  id: String;  name: String; email: String; age: Number;}
 
 const userSchema = new mongoose.Schema({
-    id: {
-        type: String,
-        required: true
-    },
     name: {
         type: String,
         required: true
@@ -21,8 +17,4 @@ const userSchema = new mongoose.Schema({
     },
 })
 
-const initUser = mongoose.model('User', userSchema);
-
-export const User = (attr:userInterface) => {
-    return new initUser(attr);
-}
+export const User = mongoose.model('User', userSchema);
