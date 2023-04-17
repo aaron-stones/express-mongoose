@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-interface userInterface {  id: String;  name: String; email: String; age: Number;}
+export interface userInterface {  name: string; email: string; age: number;}
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -17,4 +17,4 @@ const userSchema = new mongoose.Schema({
     },
 })
 
-export const User = mongoose.model('User', userSchema);
+export const User = mongoose.model<userInterface>('User', userSchema);

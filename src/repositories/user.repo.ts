@@ -2,7 +2,7 @@ import { UserDto } from '../dtos/user.dto';
 import { User } from '../models/user.model';
 import { UserType } from '../types/user.type';
 
-export const get = async (id: string): Promise<UserType | null> => {
+export const findOne = async (id: string): Promise<UserType | null> => {
     try {
       return await User.findById(id);
     }
@@ -11,17 +11,25 @@ export const get = async (id: string): Promise<UserType | null> => {
     }
 }
 
+export const get = async (): Promise<UserType[] | null> => {
+  try {
+    return await User.find();
+  }
+  catch(e){
+    console.log('error finding all results', e);
+    return null;
+  }
+}
+
 export const create = async (user: UserDto): Promise<UserType | null> => {
-  let result:UserType = null;
 
   try {
-    result = await User.create(user);
+    return await User.create(user);
   }
   catch(e){
     console.error('unable to create record', e);
+    return null
   }
-
-  return result;
 }
 
 export const update = async (
@@ -41,7 +49,7 @@ export const update = async (
 
 export const remove = async (id: string): Promise<boolean> => {
   try {
-    await User.findByIdAndDelete({id})
+    await User.findByIdAndDelete(id)
     return true;
   }
   catch(e){

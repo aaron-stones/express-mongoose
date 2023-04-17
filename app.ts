@@ -1,5 +1,5 @@
 import express, { Express } from 'express';
-import { databaseConn } from './src/database/databaseConn';
+import { databaseConn } from './src/database/database.conn';
 import UserRouter from './src/routes/user.route';
 import { ConnString } from './src/utils/constants/database';
 

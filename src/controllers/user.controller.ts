@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
 import { UserDto } from "../dtos/user.dto";
 import {
-    createUser,
-    deleteUser,
-    getUser,
-    updateUser,
+  createUser,
+  deleteUser,
+  getAllUsers,
+  getUser,
+  updateUser,
 } from "../services/user.service";
+import { internalServerError } from "../utils/constants/messages";
 
 export const getSingle = async (req: Request, res: Response) => {
   const id = req.params.userID;
@@ -17,9 +19,21 @@ export const getSingle = async (req: Request, res: Response) => {
 
     res.status(404).json();
   }
+  else res.status(200).json(result);
 
-  res.status(200).json(result);
 };
+
+export const getAll = async (req: Request, res: Response) => {
+  const result = await getAllUsers();
+  
+  if(!result){
+    console.error('Unable to find records');
+
+    res.status(404).json();
+  }
+
+  else res.status(200).json(result);
+}
 
 export const create = async (req: Request, res: Response) => {
   const newUser: UserDto = req.body;
@@ -28,10 +42,10 @@ export const create = async (req: Request, res: Response) => {
   if (!result) {
     console.error("Unable to create record");
 
-    res.status(500).json();
+    res.status(500).json(internalServerError);
   }
+  else res.status(201).json(result);
 
-  res.status(201).json(result);
 };
 
 export const update = async (req: Request, res: Response) => {
@@ -43,10 +57,10 @@ export const update = async (req: Request, res: Response) => {
   if (!result) {
     console.error("Unable to update record");
 
-    res.status(500).json();
+    res.status(500).json(internalServerError);
   }
+  else res.status(200).json(result);
 
-  res.status(200).json(result);
 };
 
 export const remove = async (req: Request, res: Response) => {
@@ -57,8 +71,7 @@ export const remove = async (req: Request, res: Response) => {
     if (!result) {
       console.error("Unable to delete record");
   
-      res.status(500).json();
+      res.status(500).json(internalServerError);
     }
-  
-    res.status(200).json(result);
+    else res.status(200).json();
 };
