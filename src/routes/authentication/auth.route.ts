@@ -1,7 +1,8 @@
-import express from 'express';
+/* eslint-disable @typescript-eslint/no-misused-promises */
+import express from 'express'
 import {
-    create
-} from '../../controllers/authentication/auth.controller';
+  create
+} from '../../controllers/authentication/auth.controller'
 
 const AuthRouter = express.Router()
 

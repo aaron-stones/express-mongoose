@@ -1,22 +1,23 @@
-import express, { Express, NextFunction, Request, Response } from 'express';
-import { create } from './src/controllers/authentication/auth.controller';
-import { databaseConn } from './src/database/database.conn';
-import { routerLogParams, routerLogTime } from './src/middleware/logging/RouterLogging';
-import UserRouter from './src/routes/user/user.route';
+/* eslint-disable @typescript-eslint/no-floating-promises */
+import express, { type Express, type NextFunction, type Request, type Response } from 'express'
+import { databaseConn } from './src/database/database.conn'
+import { routerLogParams, routerLogTime } from './src/middleware/logging/RouterLogging'
+import AuthRouter from './src/routes/authentication/auth.route'
+import UserRouter from './src/routes/user/user.route'
 
 const app: Express = express()
 
-databaseConn();
+databaseConn()
 
 app.use((req: Request, res: Response, next: NextFunction) => {
-    routerLogTime();
-    routerLogParams(req);
-    next();
-});
+  routerLogTime()
+  routerLogParams(req)
+  next()
+})
 
 app.use(express.json())
 
-app.post('/', create);
+app.use('/auth', AuthRouter)
 
 app.use('/user', UserRouter)
 

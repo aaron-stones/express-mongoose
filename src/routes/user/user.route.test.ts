@@ -1,151 +1,140 @@
-import { ObjectId } from 'mongoose';
-import { default as supertest } from 'supertest';
-import app from '../../../app';
-import { UserCreateDto } from '../../dtos/user.create.dto';
-import { create, findOne, get, remove, update } from '../../repositories/user.repo';
-import { UserType } from '../../types/user.type';
-import { mockFunction } from '../../utils/helpers/mocks';
-import { internalServerError } from '../../utils/test/constants/messages';
+import { type ObjectId } from 'mongoose'
+import supertest from 'supertest'
+import app from '../../../app'
+import { type UserCreateDto } from '../../dtos/user.create.dto'
+import { AuthMiddlewareJwtAssert } from '../../middleware/authentication/authMiddleware'
+import { create, findOne, get, remove, update } from '../../repositories/user.repo'
+import { type UserType } from '../../types/user.type'
+import { mockFunction } from '../../utils/helpers/mocks'
+import { internalServerError } from '../../utils/test/constants/messages'
 
-jest.mock('../repositories/user.repo')
+jest.mock('../../repositories/user.repo')
 jest.mock('mongoose', () => ({
-    connect: jest.fn(),
-    Schema: jest.fn(),
-    model: jest.fn(),
+  connect: jest.fn(),
+  Schema: jest.fn(),
+  model: jest.fn()
 }))
+jest.mock('../../middleware/authentication/authMiddleware')
 
-const user:UserType = {
-    age: 12,
-    email: 'test@test.com',
-    name: 'test testington',
-    _id: '12345678' as unknown as ObjectId
+const user: UserType = {
+  age: 12,
+  email: 'test@test.com',
+  name: 'test testington',
+  _id: '12345678' as unknown as ObjectId
 }
 
-const createDto:UserCreateDto = {
-    name: 'test testington',
-    email: 'test@test.com',
-    age: 1
+const createDto: UserCreateDto = {
+  name: 'test testington',
+  email: 'test@test.com',
+  age: 1
 }
 
-const request = supertest(app);
+const request = supertest(app)
 
 describe('User Router', () => {
-    afterEach(() => {
-        jest.clearAllMocks();
-    })
-    describe('getSingle record', () => {
-        it('getSingle User endpoint returns a 200 and the correct body when request is successful', async () => {
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+  beforeAll(() => {
+    mockFunction(AuthMiddlewareJwtAssert).mockReturnValue(true)
+  })
+  describe('getSingle record', () => {
+    it('getSingle User endpoint returns a 200 and the correct body when request is successful', async () => {
+      const findMock = mockFunction(findOne).mockResolvedValue(user)
+      const response = await request.get('/user/1')
 
-            const findMock = mockFunction(findOne).mockResolvedValue(user);
-            const response = await request.get('/user/1');
-    
-            expect(response.statusCode).toBe(200);
-            expect(response.body).toStrictEqual(user);
-            expect(findMock).toHaveBeenNthCalledWith(1, '1');
-        })
-
-        it('getSingle User endpoint returns a 404 and no body when request is unsuccessful', async () => {
-
-            const findMock = mockFunction(findOne).mockResolvedValue(null);
-            const response = await request.get('/user/1');
-    
-            expect(response.statusCode).toBe(404);
-            expect(response.body).toBe("");
-            expect(findMock).toHaveBeenNthCalledWith(1, '1');
-
-        })
+      expect(response.statusCode).toBe(200)
+      expect(response.body).toStrictEqual(user)
+      expect(findMock).toHaveBeenNthCalledWith(1, '1')
     })
 
-    describe('get all records', () => {
-        it('get Users endpoint returns a 200 and the correct body when request is successful', async () => {
+    it('getSingle User endpoint returns a 404 and no body when request is unsuccessful', async () => {
+      const findMock = mockFunction(findOne).mockResolvedValue(null)
+      const response = await request.get('/user/1')
 
-            const getMock = mockFunction(get).mockResolvedValue([user]);
-            const response = await request.get('/user');
-    
-            expect(response.statusCode).toBe(200);
-            expect(response.body).toStrictEqual([user]);
-            expect(getMock).toHaveBeenCalledTimes(1);
+      expect(response.statusCode).toBe(404)
+      expect(response.body).toBe('')
+      expect(findMock).toHaveBeenNthCalledWith(1, '1')
+    })
+  })
 
-        })
+  describe('get all records', () => {
+    it('get Users endpoint returns a 200 and the correct body when request is successful', async () => {
+      const getMock = mockFunction(get).mockResolvedValue([user])
+      const response = await request.get('/user')
 
-        it('get Users endpoint returns a 404 and no body when request is unsuccessful', async () => {
-
-            const getMock = mockFunction(get).mockResolvedValue(null);
-            const response = await request.get('/user');
-    
-            expect(response.statusCode).toBe(404);
-            expect(response.body).toBe("");
-            expect(getMock).toHaveBeenCalledTimes(1);
-
-        })
+      expect(response.statusCode).toBe(200)
+      expect(response.body).toStrictEqual([user])
+      expect(getMock).toHaveBeenCalledTimes(1)
     })
 
-    describe('create records', () => {
-        it('create Users endpoint returns a 200 and the correct body when request is successful', async () => {
+    it('get Users endpoint returns a 404 and no body when request is unsuccessful', async () => {
+      const getMock = mockFunction(get).mockResolvedValue(null)
+      const response = await request.get('/user')
 
-            const createMock = mockFunction(create).mockResolvedValue(user);
-            const response = (await request.post('/user').send(createDto));
+      expect(response.statusCode).toBe(404)
+      expect(response.body).toBe('')
+      expect(getMock).toHaveBeenCalledTimes(1)
+    })
+  })
 
-            expect(response.statusCode).toBe(201);
-            expect(response.body).toStrictEqual(user);
-            expect(createMock).toHaveBeenNthCalledWith(1, createDto);
+  describe('create records', () => {
+    it('create Users endpoint returns a 200 and the correct body when request is successful', async () => {
+      const createMock = mockFunction(create).mockResolvedValue(user)
+      const response = (await request.post('/user').send(createDto))
 
-        })
-
-        it('create Users endpoint returns a 500 and no body when request is unsuccessful', async () => {
-
-            const createMock = mockFunction(create).mockResolvedValue(null);
-            const response = (await request.post('/user').send(createDto));
-
-            expect(response.statusCode).toBe(500);
-            expect(response.body).toStrictEqual(internalServerError);
-            expect(createMock).toHaveBeenNthCalledWith(1, createDto);
-        })
+      expect(response.statusCode).toBe(201)
+      expect(response.body).toStrictEqual(user)
+      expect(createMock).toHaveBeenNthCalledWith(1, createDto)
     })
 
-    describe('update User records', () => {
-        it('update Users endpoint returns a 200 and the correct body when request is successful', async () => {
+    it('create Users endpoint returns a 500 and no body when request is unsuccessful', async () => {
+      const createMock = mockFunction(create).mockResolvedValue(null)
+      const response = (await request.post('/user').send(createDto))
 
-            const updateMock = mockFunction(update).mockResolvedValue(user);
-            const response = (await request.put('/user/1').send(createDto));
+      expect(response.statusCode).toBe(500)
+      expect(response.body).toStrictEqual(internalServerError)
+      expect(createMock).toHaveBeenNthCalledWith(1, createDto)
+    })
+  })
 
-            expect(response.statusCode).toBe(200);
-            expect(response.body).toStrictEqual(user);
-            expect(updateMock).toHaveBeenNthCalledWith(1, '1', createDto);
+  describe('update User records', () => {
+    it('update Users endpoint returns a 200 and the correct body when request is successful', async () => {
+      const updateMock = mockFunction(update).mockResolvedValue(user)
+      const response = (await request.put('/user/1').send(createDto))
 
-        })
-
-        it('update Users endpoint returns a 404 and no body when request is unsuccessful', async () => {
-
-            const updateMock = mockFunction(update).mockResolvedValue(null);
-            const response = (await request.put('/user/1').send(createDto));
-
-            expect(response.statusCode).toBe(500);
-            expect(response.body).toStrictEqual(internalServerError);
-            expect(updateMock).toHaveBeenNthCalledWith(1, '1', createDto);
-        })
+      expect(response.statusCode).toBe(200)
+      expect(response.body).toStrictEqual(user)
+      expect(updateMock).toHaveBeenNthCalledWith(1, '1', createDto)
     })
 
-    describe('remove a record endpoint', () => {
-        it('remove User endpoint returns a 200 and the correct body when request is successful', async () => {
+    it('update Users endpoint returns a 404 and no body when request is unsuccessful', async () => {
+      const updateMock = mockFunction(update).mockResolvedValue(null)
+      const response = (await request.put('/user/1').send(createDto))
 
-            const removeMock = mockFunction(remove).mockResolvedValue(true);
-            const response = await request.delete('/user/1');
-    
-            expect(response.statusCode).toBe(200);
-            expect(response.body).toStrictEqual('');
-            expect(removeMock).toHaveBeenNthCalledWith(1, '1');
-        })
+      expect(response.statusCode).toBe(500)
+      expect(response.body).toStrictEqual(internalServerError)
+      expect(updateMock).toHaveBeenNthCalledWith(1, '1', createDto)
+    })
+  })
 
-        it('remove single User endpoint returns a 404 and no body when request is unsuccessful', async () => {
-            const removeMock = mockFunction(remove).mockResolvedValue(false);
-            const response = await request.delete('/user/1');
-    
-            expect(response.statusCode).toBe(500);
-            expect(response.body).toStrictEqual(internalServerError);
-            expect(removeMock).toHaveBeenNthCalledWith(1, '1');
+  describe('remove a record endpoint', () => {
+    it('remove User endpoint returns a 200 and the correct body when request is successful', async () => {
+      const removeMock = mockFunction(remove).mockResolvedValue(true)
+      const response = await request.delete('/user/1')
 
-        })
+      expect(response.statusCode).toBe(200)
+      expect(response.body).toStrictEqual('')
+      expect(removeMock).toHaveBeenNthCalledWith(1, '1')
     })
 
+    it('remove single User endpoint returns a 404 and no body when request is unsuccessful', async () => {
+      const removeMock = mockFunction(remove).mockResolvedValue(false)
+      const response = await request.delete('/user/1')
+
+      expect(response.statusCode).toBe(500)
+      expect(response.body).toStrictEqual(internalServerError)
+      expect(removeMock).toHaveBeenNthCalledWith(1, '1')
+    })
+  })
 })

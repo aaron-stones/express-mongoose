@@ -1,31 +1,31 @@
-import { Request } from 'express'
-import { ObjectId } from 'mongoose'
+import { type Request } from 'express'
+import { type ObjectId } from 'mongoose'
 import { mockResponse } from '../../__mocks__/MockResponse'
 import {
   createUser,
   deleteUser,
   getAllUsers,
   getUser,
-  updateUser,
+  updateUser
 } from '../../services/user.service'
-import { UserType } from '../../types/user.type'
+import { type UserType } from '../../types/user.type'
 import { mockFunction } from '../../utils/helpers/mocks'
 import { internalServerError } from '../../utils/test/constants/messages'
 import { create, getAll, getSingle, remove, update } from './user.controller'
 
-jest.mock('../services/user.service')
+jest.mock('../../services/user.service')
 
 const userID = 'test'
 
 const req = {
   params: {
-    userID,
+    userID
   },
   body: {
     name: 'test testington',
     email: 'test@test.com',
     age: 52
-  },
+  }
 } as unknown as Request
 
 const input: UserType = {
@@ -35,7 +35,7 @@ const input: UserType = {
   _id: '12345678' as unknown as ObjectId
 }
 
-const res = mockResponse();
+const res = mockResponse()
 
 describe('User Controller', () => {
   afterEach(() => {
@@ -43,9 +43,9 @@ describe('User Controller', () => {
   })
   describe('Get all users API call', () => {
     it('should return a 200 response code, call the service layer once and return the correct response to client when there are records found', async () => {
-      const mock = mockFunction(getAllUsers).mockResolvedValue([input]);
+      mockFunction(getAllUsers).mockResolvedValue([input])
 
-      await getAll(req, res);
+      await getAll(req, res)
 
       expect(getAllUsers).toHaveBeenCalledTimes(1)
       expect(res.status).toHaveBeenNthCalledWith(1, 200)
@@ -53,11 +53,11 @@ describe('User Controller', () => {
     })
 
     it('should return a 404 response code, call the service layer once and return the correct response to client when there are no records found', async () => {
-      const mock = mockFunction(getAllUsers).mockResolvedValue(null);
+      mockFunction(getAllUsers).mockResolvedValue(null)
 
-      const res = mockResponse();
+      const res = mockResponse()
 
-      await getAll(req, res);
+      await getAll(req, res)
 
       expect(getAllUsers).toHaveBeenCalledTimes(1)
       expect(res.status).toHaveBeenNthCalledWith(1, 404)
@@ -70,7 +70,7 @@ describe('User Controller', () => {
 
       mock.mockResolvedValue(input)
 
-      const res = mockResponse();
+      const res = mockResponse()
 
       await getSingle(req, res)
 
@@ -84,7 +84,7 @@ describe('User Controller', () => {
 
       mock.mockResolvedValue(null)
 
-      const res = mockResponse();
+      const res = mockResponse()
 
       await getSingle(req, res)
 
@@ -96,9 +96,9 @@ describe('User Controller', () => {
 
   describe('Create a new User API Call', () => {
     const result = {
-        name: 'test',
-        email: 'test',
-        age: 52
+      name: 'test',
+      email: 'test',
+      age: 52
     }
 
     it('should return a 201 response code, call the service layer once and return the correct input to client when there is a record created', async () => {
@@ -106,7 +106,7 @@ describe('User Controller', () => {
 
       mock.mockResolvedValue(result)
 
-      const res = mockResponse();
+      const res = mockResponse()
 
       await create(req, res)
 
@@ -120,7 +120,7 @@ describe('User Controller', () => {
 
       mock.mockResolvedValue(null)
 
-      const res = mockResponse();
+      const res = mockResponse()
 
       await create(req, res)
 
@@ -132,10 +132,10 @@ describe('User Controller', () => {
 
   describe('Update a User API Call', () => {
     const result = {
-        name: 'test',
-        email: 'test',
-        age: 52,
-        _id: '12345678' as unknown as ObjectId
+      name: 'test',
+      email: 'test',
+      age: 52,
+      _id: '12345678' as unknown as ObjectId
     }
 
     it('should return a 200 response code, call the service layer once and return the updated input to client when there is a record updated', async () => {
@@ -143,7 +143,7 @@ describe('User Controller', () => {
 
       mock.mockResolvedValue(result)
 
-      const res = mockResponse();
+      const res = mockResponse()
 
       await update(req, res)
 
@@ -161,7 +161,7 @@ describe('User Controller', () => {
 
       mock.mockResolvedValue(null)
 
-      const res = mockResponse();
+      const res = mockResponse()
 
       await update(req, res)
 
@@ -177,7 +177,7 @@ describe('User Controller', () => {
 
       mock.mockResolvedValue(true)
 
-      const res = mockResponse();
+      const res = mockResponse()
 
       await remove(req, res)
 
@@ -191,7 +191,7 @@ describe('User Controller', () => {
 
       mock.mockResolvedValue(false)
 
-      const res = mockResponse();
+      const res = mockResponse()
 
       await remove(req, res)
 
