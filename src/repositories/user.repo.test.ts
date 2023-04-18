@@ -1,4 +1,5 @@
-import { UserDto } from "../dtos/user.dto";
+import { ObjectId } from "mongoose";
+import { UserCreateDto } from "../dtos/user.create.dto";
 import { User, userInterface } from "../models/user.model";
 import { UserType } from "../types/user.type";
 import { mockFunction } from "../utils/helpers/mocks";
@@ -12,6 +13,7 @@ const user: UserType = {
   age: 1,
   email: "test@test.com",
   name: "test testington",
+  _id: "12345678" as unknown as ObjectId
 };
 
 describe("User Repository", () => {
@@ -60,7 +62,7 @@ describe("User Repository", () => {
 
   describe("create records function", () => {
 
-    const dto:UserDto = {
+    const dto:UserCreateDto = {
         name: "test",
         email: "test@test.com",
         age: 22
@@ -92,7 +94,7 @@ describe("User Repository", () => {
 
   describe("update records function", () => {
 
-    const dto:UserDto = {
+    const dto:UserCreateDto = {
         name: "test",
         email: "test@test.com",
         age: 22

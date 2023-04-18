@@ -1,1 +1,0 @@
-export const ConnString = `mongodb://${process.env.MONGO_ROOT_USERNAME}:${process.env.MONGO_ROOT_PASSWORD}@${process.env.MONGO_HOSTNAME}:${process.env.MONGO_PORT}?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.8.0`

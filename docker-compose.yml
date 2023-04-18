@@ -1,14 +1,41 @@
 version: '3.7'
 services:
-  mongodb_container:
-    image: mongo:latest
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
-    ports:
-      - ${MONGO_PORT}:${MONGO_PORT}
+  mongo:
+    container_name: mongo
+    image: mongo
+    restart: always
     volumes:
-      - mongodb_data_container:/data/db
-
+      - ./data:/data/db
+    ports:
+      - 27017:27017
+    networks:
+      - app-network
+    # environment:
+    #   - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
+    #   - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+  web:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: nodejs:latest
+    env_file:
+      - .env
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=${PORT}
+      - CLASSIFICATION=${CLASSIFICATION}
+      - MONGO_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
+      - MONGO_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - MONGO_HOSTNAME=${MONGO_HOSTNAME}
+      - MONGO_PORT=${MONGO_PORT}
+      - MONGO_URL=${MONGO_URL}
+    networks:
+      - app-network
 volumes:
   mongodb_data_container:
+networks:
+  app-network:

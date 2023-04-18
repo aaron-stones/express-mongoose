@@ -1,9 +1,9 @@
 import { ObjectId } from "mongoose"
 
-export type UserType = {
+export type UserResponseDto = {
     name: string
     email: string
-    age : number
+    age: number
     _id: ObjectId
 } | null
   

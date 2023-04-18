@@ -1,18 +1,23 @@
-import express, { Express } from 'express';
+import express, { Express, NextFunction, Request, Response } from 'express';
+import { create } from './src/controllers/authentication/auth.controller';
 import { databaseConn } from './src/database/database.conn';
-import UserRouter from './src/routes/user.route';
-import { ConnString } from './src/utils/constants/database';
+import { routerLogParams, routerLogTime } from './src/middleware/logging/RouterLogging';
+import UserRouter from './src/routes/user/user.route';
 
 const app: Express = express()
 
-try {
-    databaseConn(ConnString);
-}
-catch(e){
-    console.error('FAILED CONN TO DB', e);
-}
+databaseConn();
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+    routerLogTime();
+    routerLogParams(req);
+    next();
+});
 
 app.use(express.json())
+
+app.post('/', create);
+
 app.use('/user', UserRouter)
 
 export default app

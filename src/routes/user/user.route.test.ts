@@ -1,25 +1,27 @@
+import { ObjectId } from 'mongoose';
 import { default as supertest } from 'supertest';
-import app from '../../app';
-import { UserDto } from '../dtos/user.dto';
-import { create, findOne, get, remove, update } from '../repositories/user.repo';
-import { UserType } from '../types/user.type';
-import { mockFunction } from '../utils/helpers/mocks';
-import { internalServerError } from '../utils/test/constants/messages';
+import app from '../../../app';
+import { UserCreateDto } from '../../dtos/user.create.dto';
+import { create, findOne, get, remove, update } from '../../repositories/user.repo';
+import { UserType } from '../../types/user.type';
+import { mockFunction } from '../../utils/helpers/mocks';
+import { internalServerError } from '../../utils/test/constants/messages';
 
 jest.mock('../repositories/user.repo')
 jest.mock('mongoose', () => ({
     connect: jest.fn(),
     Schema: jest.fn(),
-    model: jest.fn()
+    model: jest.fn(),
 }))
 
 const user:UserType = {
     age: 12,
     email: 'test@test.com',
-    name: 'test testington'
+    name: 'test testington',
+    _id: '12345678' as unknown as ObjectId
 }
 
-const createDto:UserDto = {
+const createDto:UserCreateDto = {
     name: 'test testington',
     email: 'test@test.com',
     age: 1

@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
-import { UserDto } from "../dtos/user.dto";
+import { UserCreateDto } from "../../dtos/user.create.dto";
 import {
   createUser,
   deleteUser,
   getAllUsers,
   getUser,
   updateUser,
-} from "../services/user.service";
-import { internalServerError } from "../utils/constants/messages";
+} from "../../services/user.service";
+import { internalServerError } from "../../utils/constants/messages";
 
 export const getSingle = async (req: Request, res: Response) => {
   const id = req.params.userID;
@@ -36,7 +36,8 @@ export const getAll = async (req: Request, res: Response) => {
 }
 
 export const create = async (req: Request, res: Response) => {
-  const newUser: UserDto = req.body;
+
+  const newUser: UserCreateDto = req.body;
   const result = await createUser(newUser);
 
   if (!result) {
@@ -50,7 +51,7 @@ export const create = async (req: Request, res: Response) => {
 
 export const update = async (req: Request, res: Response) => {
   const id = req.params.userID;
-  const updatedResult: UserDto = req.body;
+  const updatedResult: UserCreateDto = req.body;
 
   const result = await updateUser(id, updatedResult);
 

@@ -1,15 +1,16 @@
 import { Request } from 'express'
-import { mockResponse } from '../__mocks__/MockResponse'
+import { ObjectId } from 'mongoose'
+import { mockResponse } from '../../__mocks__/MockResponse'
 import {
   createUser,
   deleteUser,
   getAllUsers,
   getUser,
   updateUser,
-} from '../services/user.service'
-import { UserType } from '../types/user.type'
-import { mockFunction } from '../utils/helpers/mocks'
-import { internalServerError } from '../utils/test/constants/messages'
+} from '../../services/user.service'
+import { UserType } from '../../types/user.type'
+import { mockFunction } from '../../utils/helpers/mocks'
+import { internalServerError } from '../../utils/test/constants/messages'
 import { create, getAll, getSingle, remove, update } from './user.controller'
 
 jest.mock('../services/user.service')
@@ -30,7 +31,8 @@ const req = {
 const input: UserType = {
   name: 'test',
   email: 'test',
-  age: 52
+  age: 52,
+  _id: '12345678' as unknown as ObjectId
 }
 
 const res = mockResponse();
@@ -132,7 +134,8 @@ describe('User Controller', () => {
     const result = {
         name: 'test',
         email: 'test',
-        age: 52
+        age: 52,
+        _id: '12345678' as unknown as ObjectId
     }
 
     it('should return a 200 response code, call the service layer once and return the updated input to client when there is a record updated', async () => {

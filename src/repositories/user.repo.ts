@@ -1,8 +1,9 @@
-import { UserDto } from '../dtos/user.dto';
-import { User } from '../models/user.model';
+import { UserCreateDto } from '../dtos/user.create.dto';
+import { UserResponseDto } from '../dtos/user.response.dto';
+import { User, userInterface } from '../models/user.model';
 import { UserType } from '../types/user.type';
 
-export const findOne = async (id: string): Promise<UserType | null> => {
+export const findOne = async (id: string): Promise<UserResponseDto | null> => {
     try {
       return await User.findById(id);
     }
@@ -11,17 +12,17 @@ export const findOne = async (id: string): Promise<UserType | null> => {
     }
 }
 
-export const get = async (): Promise<UserType[] | null> => {
+export const get = async (): Promise<UserResponseDto[] | null> => {
   try {
     return await User.find();
   }
   catch(e){
-    console.log('error finding all results', e);
+    console.error('error finding all results', e);
     return null;
   }
 }
 
-export const create = async (user: UserDto): Promise<UserType | null> => {
+export const create = async (user: UserCreateDto): Promise<userInterface | null> => {
 
   try {
     return await User.create(user);
@@ -34,8 +35,8 @@ export const create = async (user: UserDto): Promise<UserType | null> => {
 
 export const update = async (
   id: string,
-  user: UserDto
-): Promise<UserType> => {
+  user: UserCreateDto
+): Promise<UserResponseDto> => {
   let result:UserType = null;
 
   try {

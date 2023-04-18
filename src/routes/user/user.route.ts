@@ -1,11 +1,11 @@
-import express from 'express'
+import express from 'express';
 import {
     create,
     getAll,
     getSingle,
     remove,
     update,
-} from '../controllers/user.controller'
+} from '../../controllers/user/user.controller';
 
 const PARAMS = '/:userID'
 
