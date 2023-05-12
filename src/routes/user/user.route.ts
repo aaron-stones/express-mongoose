@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import express, { type NextFunction, type Request, type Response } from 'express'
+import express, {
+  type NextFunction,
+  type Request,
+  type Response
+} from 'express'
 import {
   create,
   getAll,
@@ -9,6 +13,8 @@ import {
 } from '../../controllers/user/user.controller'
 import { AuthMiddlewareJwtAssert } from '../../middleware/authentication/authMiddleware'
 import { authenticationClientError } from '../../utils/constants/messages'
+
+// create a router
 
 const PARAMS = '/:userID'
 
